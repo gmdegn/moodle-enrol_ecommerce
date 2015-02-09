@@ -31,7 +31,7 @@ require(__DIR__.'/../../../config.php');
 require_once("$CFG->libdir/clilib.php");
 
 // Now get cli options.
-list($options, $unrecognized) = cli_get_params(array('verbose'=>false, 'help'=>false), array('v'=>'verbose', 'h'=>'help'));
+list($options, $unrecognized) = cli_get_params(array('verbose' => false, 'help' => false), array('v' => 'verbose', 'h' => 'help'));
 
 if ($unrecognized) {
     $unrecognized = implode("\n  ", $unrecognized);
@@ -63,7 +63,7 @@ if (empty($options['verbose'])) {
     $trace = new text_progress_trace();
 }
 
-/** @var $plugin enrol_ecommerce_plugin */
+/* @var $plugin enrol_ecommerce_plugin */
 $plugin = enrol_get_plugin('ecommerce');
 
 $result = $plugin->sync($trace, null);

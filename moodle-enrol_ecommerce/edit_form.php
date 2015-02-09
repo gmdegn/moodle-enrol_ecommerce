@@ -1,18 +1,18 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+//  This file is part of Moodle - http:// moodle.org/
 //
-// Moodle is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+//  Moodle is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
 //
-// Moodle is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
+//  Moodle is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+//  You should have received a copy of the GNU General Public License
+//  along with Moodle.  If not, see <http:// www.gnu.org/licenses/>.
 
 /**
  * Elightenment ecommerce enrolment plugin.
@@ -21,7 +21,7 @@
  *
  * @package    enrol_ecommerce
  * @copyright  2015 Gary McKnight
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license    http:// www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -29,28 +29,34 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/formslib.php');
 
+/*
+* edit form
+*/
 class enrol_ecommerce_edit_form extends moodleform {
 
-    function definition() {
+    /*
+    *   setup
+    */
+    public function definition() {
         $mform = $this->_form;
 
         list($instance, $plugin, $context) = $this->_customdata;
 
         $mform->addElement('header', 'header', get_string('pluginname', 'enrol_ecommerce'));
 
-		//Set custom instance name
+        // Set custom instance name
         $mform->addElement('text', 'name', get_string('custominstancename', 'enrol'));
         $mform->setType('name', PARAM_TEXT);
 
-		//Menu "allow paid subscription"
-        $options = array(ENROL_INSTANCE_ENABLED  => get_string('yes'),
+        //  Menu "allow paid subscription"
+        $options = array(ENROL_INSTANCE_ENABLED => get_string('yes'),
                          ENROL_INSTANCE_DISABLED => get_string('no'));
         $mform->addElement('select', 'status', get_string('status', 'enrol_ecommerce'), $options);
         $mform->setDefault('status', $plugin->get_config('status'));
 
-		//Course cost
-        $mform->addElement('text', 'cost', get_string('cost', 'enrol_ecommerce'), array('size'=>4));
-        $mform->setType('cost', PARAM_RAW); // Use unformat_float to get real value.
+        // Course cost
+        $mform->addElement('text', 'cost', get_string('cost', 'enrol_ecommerce'), array('size' => 4));
+        $mform->setType('cost', PARAM_RAW); //  Use unformat_float to get real value.
         $mform->setDefault('cost', format_float($plugin->get_config('cost'), 2, true));
 
         if ($instance->id) {
@@ -60,7 +66,6 @@ class enrol_ecommerce_edit_form extends moodleform {
         }
         $mform->addElement('select', 'roleid', get_string('assignrole', 'enrol_ecommerce'), $roles);
         $mform->setDefault('roleid', $plugin->get_config('roleid'));
-
 
         $mform->addElement('duration', 'enrolperiod', get_string('enrolperiod', 'enrol_ecommerce'), array('optional' => true, 'defaultunit' => 86400));
         $mform->setDefault('enrolperiod', $plugin->get_config('enrolperiod'));
@@ -89,7 +94,10 @@ class enrol_ecommerce_edit_form extends moodleform {
         $this->set_data($instance);
     }
 
-    function validation($data, $files) {
+    /**
+    * validate
+    */
+    public function validation($data, $files) {
         global $DB, $CFG;
         $errors = parent::validation($data, $files);
 

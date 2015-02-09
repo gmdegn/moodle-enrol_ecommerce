@@ -1,0 +1,15 @@
+<div align="center">
+<p><?php print_string("paymentrequired") ?></p>
+<p><b><?php echo $instancename; ?></b></p>
+<p><b><?php echo get_string("cost").": {$instance->currency} {$localisedcost}"; ?></b></p>
+<p><?php print_string("paymentinstant") ?></p>
+
+<form action="<?php p($shopURL) ?>" method="post">
+
+<input type="hidden" name="id" value="<?php p($courseID) ?>" />
+
+<input type="submit" value="<?php print_string("sendpaymentbutton", "enrol_ecommerce") ?>" />
+
+</form>
+
+</div>

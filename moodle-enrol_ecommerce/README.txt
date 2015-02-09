@@ -1,23 +1,28 @@
 -----------------------
 Purpose of Plugin
 ----------------------
-This plugin allows you to set up a course shop, shopping cart and enrolment to be used with the Elightenment Learning ‚Äúecommerce‚Äù service.
+This plugin allows you to set up a course shop, shopping cart and enrolment to be used with the Elightenment Learning ìecommerceî service.
 
 !--NOTICE--!
 Your Paypal account MUST have IPN enabled for this plugin to function correctly!
+
+-------------
+Release Notes
+-------------
+V1.1 - Edited the code to fit Moodle's "style"
 
 --------------
 How to Install
 --------------
 1. Put "ecommerce" folder into ".../enrol/ecommerce".
 2. Run "Upgrade Moodle Database." If this doesn't show up on its own, click on "Site Administration > Notifications".
-3. Once the plugin is installed and you have gone through the ‚Äúsettings.php‚Äù file, visit "http://elightenmentlearning.com" to setup and manage your account.
+3. Once the plugin is installed and you have gone through the ìsettings.phpî file, visit "http://elightenmentlearning.com" to setup and manage your account.
 
 --------------------
 Terms and Conditions
 --------------------
-While the Moodle Plugin is open-source and free, the ‚Äúecommerce‚Äù service provided by Elightenment Learning is handled on an external site and is a paid service. 
-1.	Use of the ‚Äúecommerce‚Äù service requires registration with Elightenment Learning, which may include, but is not limited to; 
+While the Moodle Plugin is open-source and free, the ìecommerceî service provided by Elightenment Learning is handled on an external site and is a paid service. 
+1.	Use of the ìecommerceî service requires registration with Elightenment Learning, which may include, but is not limited to; 
 a.	A valid paypal id
 b.	A first and last name
 c.	A company or organization name
@@ -36,5 +41,5 @@ g.	Username and password
 
 6.	Usage of all Payment APIs are governed by their respective Terms of Service.
 
-Elightenment Learning provides this service ‚Äúas-is‚Äù and assumes no responsibility for prompt or proper delivery, retention of information or accuracy of information. There are no warranties, implied or otherwise. Elightenment Learning makes no guarantee that your service will be timely, uninterrupted, accurate, reliable, secure or error-free.
+Elightenment Learning provides this service ìas-isî and assumes no responsibility for prompt or proper delivery, retention of information or accuracy of information. There are no warranties, implied or otherwise. Elightenment Learning makes no guarantee that your service will be timely, uninterrupted, accurate, reliable, secure or error-free.
 Elightenment Learning or any of its employees will not be held liable for any damages as a result of using this service.

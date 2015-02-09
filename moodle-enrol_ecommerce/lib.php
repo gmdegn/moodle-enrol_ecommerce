@@ -1,18 +1,18 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+//  This file is part of Moodle - http:// moodle.org/
 //
-// Moodle is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+//  Moodle is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
 //
-// Moodle is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
+//  Moodle is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+//  You should have received a copy of the GNU General Public License
+//  along with Moodle.  If not, see <http:// www.gnu.org/licenses/>.
 
 /**
  * Elightenment ecommerce enrolment plugin.
@@ -21,48 +21,64 @@
  *
  * @package    enrol_ecommerce
  * @copyright  2015 Gary McKnight
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license    http:// www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
 defined('MOODLE_INTERNAL') || die();
 
-
+/**
+* ecommerce plugin lib file
+*/
 class enrol_ecommerce_plugin extends enrol_plugin {
 
+    /**
+    * users with role assign cap may tweak the roles later
+    */
     public function roles_protected() {
-        // users with role assign cap may tweak the roles later
         return false;
     }
 
+    /**
+    * users with unenrol cap may unenrol other users manually - requires enrol/ecommerce:unenrol
+    */
     public function allow_unenrol(stdClass $instance) {
-        // users with unenrol cap may unenrol other users manually - requires enrol/ecommerce:unenrol
         return true;
     }
 
+    /**
+    * users with manage cap may tweak period and status - requires enrol/ecommerce:manage
+    */
     public function allow_manage(stdClass $instance) {
-        // users with manage cap may tweak period and status - requires enrol/ecommerce:manage
         return true;
     }
 
+    /**
+    * show link
+    */
     public function show_enrolme_link(stdClass $instance) {
         return ($instance->status == ENROL_INSTANCE_ENABLED);
     }
-	
-	//***************************************************************//
-	public function add_course_navigation($instancesnode, stdClass $instance) {
+
+    /**
+    * add navigation
+    */
+    public function add_course_navigation($instancesnode, stdClass $instance) {
         if ($instance->enrol !== 'ecommerce') {
              throw new coding_exception('Invalid enrol instance type!');
         }
 
         $context = context_course::instance($instance->courseid);
         if (has_capability('enrol/ecommerce:config', $context)) {
-            $managelink = new moodle_url('/enrol/ecommerce/edit.php', array('courseid'=>$instance->courseid, 'id'=>$instance->id));
+            $managelink = new moodle_url('/enrol/ecommerce/edit.php', array('courseid' => $instance->courseid, 'id' => $instance->id));
             $instancesnode->add($this->get_instance_name($instance), $managelink, navigation_node::TYPE_SETTING);
         }
     }
 
-	public function get_action_icons(stdClass $instance) {
+    /**
+    * get icons
+    */
+    public function get_action_icons(stdClass $instance) {
         global $OUTPUT;
 
         if ($instance->enrol !== 'ecommerce') {
@@ -73,31 +89,37 @@ class enrol_ecommerce_plugin extends enrol_plugin {
         $icons = array();
 
         if (has_capability('enrol/ecommerce:config', $context)) {
-            $editlink = new moodle_url("/enrol/ecommerce/edit.php", array('courseid'=>$instance->courseid, 'id'=>$instance->id));
+            $editlink = new moodle_url("/enrol/ecommerce/edit.php", array('courseid' => $instance->courseid, 'id' => $instance->id));
             $icons[] = $OUTPUT->action_icon($editlink, new pix_icon('t/edit', get_string('edit'), 'core',
                     array('class' => 'iconsmall')));
         }
 
         return $icons;
     }
-	
-	    public function get_newinstance_link($courseid) {
+
+        /**
+        * get link
+        */
+        public function get_newinstance_link($courseid) {
         $context = context_course::instance($courseid, MUST_EXIST);
 
         if (!has_capability('moodle/course:enrolconfig', $context) or !has_capability('enrol/ecommerce:config', $context)) {
-            return NULL;
+            return null;
         }
 
-        // multiple instances supported - different cost for different roles
-        return new moodle_url('/enrol/ecommerce/edit.php', array('courseid'=>$courseid));
+        //  multiple instances supported - different cost for different roles
+        return new moodle_url('/enrol/ecommerce/edit.php', array('courseid' => $courseid));
     }
-	
-	function enrol_page_hook(stdClass $instance) {
+
+    /**
+    * hook html file under course
+    */
+    public function enrol_page_hook(stdClass $instance) {
         global $CFG, $USER, $OUTPUT, $PAGE, $DB;
 
         ob_start();
 
-        if ($DB->record_exists('user_enrolments', array('userid'=>$USER->id, 'enrolid'=>$instance->id))) {
+        if ($DB->record_exists('user_enrolments', array('userid' => $USER->id, 'enrolid' => $instance->id))) {
             return ob_get_clean();
         }
 
@@ -109,14 +131,14 @@ class enrol_ecommerce_plugin extends enrol_plugin {
             return ob_get_clean();
         }
 
-        $course = $DB->get_record('course', array('id'=>$instance->courseid));
+        $course = $DB->get_record('course', array('id' => $instance->courseid));
         $context = context_course::instance($course->id);
 
         $shortname = format_string($course->shortname, true, array('context' => $context));
         $strloginto = get_string("loginto", "", $shortname);
         $strcourses = get_string("courses");
 
-        // Pass $view=true to filter hidden caps if the user cannot see them
+        //  Pass $view=true to filter hidden caps if the user cannot see them
         if ($users = get_users_by_capability($context, 'moodle/course:update', 'u.*', 'u.id ASC',
                                              '', '', '', '', false, true)) {
             $users = sort_by_roleassignment_authority($users, $context);
@@ -131,36 +153,35 @@ class enrol_ecommerce_plugin extends enrol_plugin {
             $cost = (float) $instance->cost;
         }
 
-        if (abs($cost) < 0.01) { // no cost, other enrolment methods (instances) should be used
+        if (abs($cost) < 0.01) { //  no cost, other enrolment methods (instances) should be used
             echo '<p>'.get_string('nocost', 'enrol_ecommerce').'</p>';
         } else {
 
             $localisedcost = format_float($cost, 2, true);
             $cost = format_float($cost, 2, false);
 
-            if (isguestuser()) { // force login only for guest user, not real users with guest role
+            if (isguestuser()) { //  force login only for guest user, not real users with guest role
                 if (empty($CFG->loginhttps)) {
                     $wwwroot = $CFG->wwwroot;
                 } else {
-                    $wwwroot = str_replace("http://", "https://", $CFG->wwwroot);
+                    $wwwroot = str_replace("http:// ", "https:// ", $CFG->wwwroot);
                 }
                 echo '<div class="mdl-align"><p>'.get_string('paymentrequired').'</p>';
                 echo '<p><b>'.get_string('cost').": $instance->currency $localisedcost".'</b></p>';
                 echo '<p><a href="'.$wwwroot.'/login/">'.get_string('loginsite').'</a></p>';
                 echo '</div>';
             } else {
-                $coursefullname  = format_string($course->fullname, true, array('context'=>$context));
-                $courseID 		 = $instance->courseid;
+                $coursefullname  = format_string($course->fullname, true, array('context' => $context));
+                $courseid 		 = $instance->courseid;
                 $userfirstname   = $USER->firstname;
                 $userlastname    = $USER->lastname;
-				$URLstring		 = $CFG->wwwroot;
-				$shopURL		 = $CFG->wwwroot.'/enrol/ecommerce/shop.php';
-				$keyDB		 	 = $DB->get_records('enrol_ecommerce');
-				
-				foreach($keyDB as $record){
-					$authKey = $record->authkey;
-				}
-				
+                $urlstring		 = $CFG->wwwroot;
+                $shopurl		 = $CFG->wwwroot.'/enrol/ecommerce/shop.php';
+                $keydb		 	 = $DB->get_records('enrol_ecommerce');
+
+                foreach ($keydb as $record){
+                    $authkey = $record->authkey;
+                }
 
                 include($CFG->dirroot.'/enrol/ecommerce/enrol.html');
             }
@@ -169,8 +190,11 @@ class enrol_ecommerce_plugin extends enrol_plugin {
 
         return $OUTPUT->box(ob_get_clean());
     }
-	
-	public function restore_instance(restore_enrolments_structure_step $step, stdClass $data, $course, $oldid) {
+
+    /**
+    * restore instance
+    */
+    public function restore_instance(restore_enrolments_structure_step $step, stdClass $data, $course, $oldid) {
         global $DB;
         if ($step->get_task()->get_target() == backup::TARGET_NEW_COURSE) {
             $merge = false;
@@ -193,25 +217,25 @@ class enrol_ecommerce_plugin extends enrol_plugin {
     }
 
     /**
-     * Restore user enrolment.
-     *
-     * @param restore_enrolments_structure_step $step
-     * @param stdClass $data
-     * @param stdClass $instance
-     * @param int $oldinstancestatus
-     * @param int $userid
-     */
+    * Restore user enrolment.
+    *
+    * @param restore_enrolments_structure_step $step
+    * @param stdClass $data
+    * @param stdClass $instance
+    * @param int $oldinstancestatus
+    * @param int $userid
+    */
     public function restore_user_enrolment(restore_enrolments_structure_step $step, $data, $instance, $userid, $oldinstancestatus) {
         $this->enrol_user($instance, $userid, null, $data->timestart, $data->timeend, $data->status);
     }
 
     /**
-     * Gets an array of the user enrolment actions
-     *
-     * @param course_enrolment_manager $manager
-     * @param stdClass $ue A user enrolment object
-     * @return array An array of user_enrolment_actions
-     */
+    * Gets an array of the user enrolment actions
+    *
+    * @param course_enrolment_manager $manager
+    * @param stdClass $ue A user enrolment object
+    * @return array An array of user_enrolment_actions
+    */
     public function get_user_enrolment_actions(course_enrolment_manager $manager, $ue) {
         $actions = array();
         $context = $manager->get_context();
@@ -220,25 +244,28 @@ class enrol_ecommerce_plugin extends enrol_plugin {
         $params['ue'] = $ue->id;
         if ($this->allow_unenrol($instance) && has_capability("enrol/ecommerce:unenrol", $context)) {
             $url = new moodle_url('/enrol/unenroluser.php', $params);
-            $actions[] = new user_enrolment_action(new pix_icon('t/delete', ''), get_string('unenrol', 'enrol'), $url, array('class'=>'unenrollink', 'rel'=>$ue->id));
+            $actions[] = new user_enrolment_action(new pix_icon('t/delete', ''), get_string('unenrol', 'enrol'), $url, array('class' => 'unenrollink', 'rel' => $ue->id));
         }
         if ($this->allow_manage($instance) && has_capability("enrol/ecommerce:manage", $context)) {
             $url = new moodle_url('/enrol/editenrolment.php', $params);
-            $actions[] = new user_enrolment_action(new pix_icon('t/edit', ''), get_string('edit'), $url, array('class'=>'editenrollink', 'rel'=>$ue->id));
+            $actions[] = new user_enrolment_action(new pix_icon('t/edit', ''), get_string('edit'), $url, array('class' => 'editenrollink', 'rel' => $ue->id));
         }
         return $actions;
     }
 
+    /**
+    *   cron job
+    */
     public function cron() {
         $trace = new text_progress_trace();
         $this->process_expirations($trace);
     }
 
     /**
-     * Execute synchronisation.
-     * @param progress_trace $trace
-     * @return int exit code, 0 means ok
-     */
+    * Execute synchronisation.
+    * @param progress_trace $trace
+    * @return int exit code, 0 means ok
+    */
     public function sync(progress_trace $trace) {
         $this->process_expirations($trace);
         return 0;
