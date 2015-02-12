@@ -25,8 +25,10 @@
  */
 
 require_once('../../config.php');
-require_once($CFG->wwwroot .'/course/lib.php');
-require_once($CFG->libdir .'/filelib.php');
+require_once('../../course/lib.php');
+require_once('../../lib/filelib.php');
+//require_once($CFG->wwwroot .'/course/lib.php');
+//require_once($CFG->libdir .'/filelib.php');
 
 session_name('MoodleSession');
 session_start();
@@ -43,6 +45,7 @@ $PAGE->set_heading(get_string('shopTitle', 'enrol_ecommerce'));
 $PAGE->set_url($CFG->wwwroot.'/enrol/ecommerce/shop.php');
 $PAGE->set_cacheable(false);
 
+$plugin = enrol_get_plugin('ecommerce');
 
 // check to see if the Cart has bee created yet. If not, create it; otherwise
 // push the course ID into the array. Then check to make sure the course hasn't been
@@ -174,7 +177,7 @@ echo '
                     echo '<option value="'.$y->id.'">'.$y->name.'</option>';
                 }
             echo' </select>
-            <input type="text" name="name" placeholder="'.get_string('namesearch', 'enrol_ecommerce').'" autocomplete="on">
+            <input type="text" name="name" placeholder="'.get_string('nameSearch', 'enrol_ecommerce').'" autocomplete="on">
             <input type="submit" value="'.get_string('search', 'enrol_ecommerce').'">
         </form>
     </div>
@@ -222,7 +225,15 @@ foreach ($courses as $course){
     } else {
         $namesearch = true;
     }
+    $buttonString = '';
+    
+    $sql = 'SELECT customint1 FROM {enrol} WHERE courseid = '.$course->id.' AND enrol = "ecommerce" ';
+    $subval = $DB->get_record_sql($sql, array(1));
 
+    foreach($DB->get_records('enrol_ecommerce') as $record){
+        $authkey = $record->authkey;
+    }
+    
     // Don't display the front page, don't display hidden courses and do not display a course that hasn't had a price set up yet.
     if ($course->id != 1 && $course->visible == 1 && $cost->cost != null && fnmatch($csearch, $course->category) && $namesearch){
 
@@ -239,11 +250,24 @@ foreach ($courses as $course){
         // To avoid using javascript, clicking the "add to cart" button will refresh the page with $_POST
         // variables to add to the $_SESSION array. It will then jump back to the course which was clicked.
         } else{
-        echo '<form method="POST" action="#'.$x.'"><b">$'.$cost->cost.' </b>
-        <input type="hidden" name="id" value="'.$course->id.'"><input type="submit" value="'.get_string('sendpaymentbutton', 'enrol_ecommerce').'"></form></div></div></div><br>'; }
-
+            if($subval->customint1 == 1){
+                echo '<form method="POST" action="http://elightenmentlearning.com/payment/paypal.php"><b>$'.$cost->cost.' </b>
+                <input type="hidden" name="pID" value="'.base64_encode(json_encode(array($course->id))).'">
+                <input type="hidden" name="pName" value="'.base64_encode(json_encode(array($course->fullname))).'">
+                <input type="hidden" name="amt" value="'.base64_encode(json_encode(array($cost->cost))).'">
+                <input type="hidden" name="siteURL" value="'.$CFG->wwwroot.'">
+                <input type="hidden" name="authkey" value="'.$authkey.'">
+                <input type="hidden" name="uID" value="'.$USER->id.'">
+                <input type="hidden" name="subsc" value="true">
+                <input type="hidden" name="subLen" value="'.$plugin->get_config('enrolperiod').'">
+                <input type="submit" value="'.get_string('subscribe', 'enrol_ecommerce').'"></form></div></div></div><br>';
+            } else {
+                echo '<form method="POST" action="#'.$x.'"><b>$'.$cost->cost.' </b>
+                <input type="hidden" name="id" value="'.$course->id.'"><input type="submit" value="'.get_string('sendpaymentbutton', 'enrol_ecommerce').'"></form></div></div></div><br>'; }
+            }
         echo '</td>';
         $x++;
+        
     }
     if ( $test != 0 ){
         echo '</tr>';

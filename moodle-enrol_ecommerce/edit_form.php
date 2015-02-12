@@ -58,6 +58,9 @@ class enrol_ecommerce_edit_form extends moodleform {
         $mform->addElement('text', 'cost', get_string('cost', 'enrol_ecommerce'), array('size' => 4));
         $mform->setType('cost', PARAM_RAW); //  Use unformat_float to get real value.
         $mform->setDefault('cost', format_float($plugin->get_config('cost'), 2, true));
+        
+        $mform->addElement('advcheckbox', 'customint1', get_string('subscribe', 'enrol_ecommerce'), array(), array(0, 1));
+        $mform->setDefault('customint1', $plugin->get_config('customint1'));
 
         if ($instance->id) {
             $roles = get_default_enrol_roles($context, $instance->roleid);

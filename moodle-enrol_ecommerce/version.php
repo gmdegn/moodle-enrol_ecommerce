@@ -26,9 +26,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2015020800;        // The current plugin version (Date: YYYYMMDDXX)
+$plugin->version   = 2015021100;        // The current plugin version (Date: YYYYMMDDXX)
 $plugin->requires  = 2014050800;        // Requires this Moodle version
-$plugin->release   = 'v1.1';
+$plugin->release   = 'v1.2';
 $plugin->component = 'enrol_ecommerce';    // Full name of the plugin (used for diagnostics)
 $plugin->cron      = 600;
 $plugin->maturity  = MATURITY_STABLE;		// Still in testing phase

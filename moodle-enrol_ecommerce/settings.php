@@ -51,6 +51,8 @@ if ($ADMIN->fulltree) {
         get_string('enrolinstancedefaults', 'admin'), get_string('enrolinstancedefaults_desc', 'admin')));
 
     $settings->add(new admin_setting_configtext('enrol_ecommerce/cost', get_string('cost', 'enrol_ecommerce'), '', 0, PARAM_FLOAT, 4));
+    
+    $settings->add(new admin_setting_configcheckbox('enrol_ecommerce/customint1', get_string('subscribe', 'enrol_ecommerce'), '', 0));
 
     if (!during_initial_install()) {
         $options = get_default_enrol_roles(context_system::instance());
@@ -61,5 +63,5 @@ if ($ADMIN->fulltree) {
     }
 
     $settings->add(new admin_setting_configduration('enrol_ecommerce/enrolperiod',
-        get_string('enrolperiod', 'enrol_ecommerce'), get_string('enrolperiod_desc', 'enrol_ecommerce'), 0));
+        get_string('enrolperiod', 'enrol_ecommerce'), get_string('enrolperiod_desc', 'enrol_ecommerce'), 604800));
 }

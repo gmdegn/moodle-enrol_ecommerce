@@ -177,7 +177,7 @@ b:not(#ignore) {
     <div class="navbar-inner" id="totals">
         <b id="ignore">Total: </b>$'.$total.'
         <br>
-        <form method="POST" action="http:// elightenmentlearning.com/payment/paypal.php">
+        <form method="POST" action="http://elightenmentlearning.com/payment/paypal.php">
             <input type="hidden" name="pID" value="'.$IDs.'">
             <input type="hidden" name="pName" value="'.$NAMEs.'">
             <input type="hidden" name="amt" value="'.$AMTs.'">
