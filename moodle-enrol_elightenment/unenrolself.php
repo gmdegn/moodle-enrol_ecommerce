@@ -15,11 +15,11 @@
 //  along with Moodle.  If not, see <http:// www.gnu.org/licenses/>.
 
 /**
- * Elightenment ecommerce enrolment plugin.
+ * elightenment elightenment enrolment plugin.
  *
  * This plugin allows you to set up a course shop and shopping cart
  *
- * @package    enrol_ecommerce
+ * @package    enrol_elightenment
  * @copyright  2015 Gary McKnight
  * @license    http:// www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,7 +30,7 @@ require('../../config.php');
 $enrolid = required_param('enrolid', PARAM_INT);
 $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
-$instance = $DB->get_record('enrol', array('id' => $enrolid, 'enrol' => 'ecommerce'), '*', MUST_EXIST);
+$instance = $DB->get_record('enrol', array('id' => $enrolid, 'enrol' => 'elightenment'), '*', MUST_EXIST);
 $course = $DB->get_record('course', array('id' => $instance->courseid), '*', MUST_EXIST);
 $context = context_course::instance($course->id, MUST_EXIST);
 
@@ -40,14 +40,14 @@ if (!is_enrolled($context)) {
 }
 require_login($course);
 
-$plugin = enrol_get_plugin('ecommerce');
+$plugin = enrol_get_plugin('elightenment');
 
 //  security defined inside following function
 if (!$plugin->get_unenrolself_link($instance)) {
     redirect(new moodle_url('/course/view.php', array('id' => $course->id)));
 }
 
-$PAGE->set_url('/enrol/ecommerce/unenrolself.php', array('enrolid' => $instance->id));
+$PAGE->set_url('/enrol/elightenment/unenrolself.php', array('enrolid' => $instance->id));
 $PAGE->set_title($plugin->get_instance_name($instance));
 
 if ($confirm and confirm_sesskey()) {
@@ -59,6 +59,6 @@ if ($confirm and confirm_sesskey()) {
 echo $OUTPUT->header();
 $yesurl = new moodle_url($PAGE->url, array('confirm' => 1, 'sesskey' => sesskey()));
 $nourl = new moodle_url('/course/view.php', array('id' => $course->id));
-$message = get_string('unenrolselfconfirm', 'enrol_ecommerce', format_string($course->fullname));
+$message = get_string('unenrolselfconfirm', 'enrol_elightenment', format_string($course->fullname));
 echo $OUTPUT->confirm($message, $yesurl, $nourl);
 echo $OUTPUT->footer();

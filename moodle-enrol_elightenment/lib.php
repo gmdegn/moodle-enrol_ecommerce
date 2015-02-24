@@ -15,11 +15,11 @@
 //  along with Moodle.  If not, see <http:// www.gnu.org/licenses/>.
 
 /**
- * Elightenment ecommerce enrolment plugin.
+ * elightenment elightenment enrolment plugin.
  *
  * This plugin allows you to set up a course shop and shopping cart
  *
- * @package    enrol_ecommerce
+ * @package    enrol_elightenment
  * @copyright  2015 Gary McKnight
  * @license    http:// www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,9 +28,9 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
-* ecommerce plugin lib file
+* elightenment plugin lib file
 */
-class enrol_ecommerce_plugin extends enrol_plugin {
+class enrol_elightenment_plugin extends enrol_plugin {
 
     /**
     * users with role assign cap may tweak the roles later
@@ -40,14 +40,14 @@ class enrol_ecommerce_plugin extends enrol_plugin {
     }
 
     /**
-    * users with unenrol cap may unenrol other users manually - requires enrol/ecommerce:unenrol
+    * users with unenrol cap may unenrol other users manually - requires enrol/elightenment:unenrol
     */
     public function allow_unenrol(stdClass $instance) {
         return true;
     }
 
     /**
-    * users with manage cap may tweak period and status - requires enrol/ecommerce:manage
+    * users with manage cap may tweak period and status - requires enrol/elightenment:manage
     */
     public function allow_manage(stdClass $instance) {
         return true;
@@ -64,13 +64,13 @@ class enrol_ecommerce_plugin extends enrol_plugin {
     * add navigation
     */
     public function add_course_navigation($instancesnode, stdClass $instance) {
-        if ($instance->enrol !== 'ecommerce') {
+        if ($instance->enrol !== 'elightenment') {
              throw new coding_exception('Invalid enrol instance type!');
         }
 
         $context = context_course::instance($instance->courseid);
-        if (has_capability('enrol/ecommerce:config', $context)) {
-            $managelink = new moodle_url('/enrol/ecommerce/edit.php', array('courseid' => $instance->courseid, 'id' => $instance->id));
+        if (has_capability('enrol/elightenment:config', $context)) {
+            $managelink = new moodle_url('/enrol/elightenment/edit.php', array('courseid' => $instance->courseid, 'id' => $instance->id));
             $instancesnode->add($this->get_instance_name($instance), $managelink, navigation_node::TYPE_SETTING);
         }
     }
@@ -81,15 +81,15 @@ class enrol_ecommerce_plugin extends enrol_plugin {
     public function get_action_icons(stdClass $instance) {
         global $OUTPUT;
 
-        if ($instance->enrol !== 'ecommerce') {
+        if ($instance->enrol !== 'elightenment') {
             throw new coding_exception('invalid enrol instance!');
         }
         $context = context_course::instance($instance->courseid);
 
         $icons = array();
 
-        if (has_capability('enrol/ecommerce:config', $context)) {
-            $editlink = new moodle_url("/enrol/ecommerce/edit.php", array('courseid' => $instance->courseid, 'id' => $instance->id));
+        if (has_capability('enrol/elightenment:config', $context)) {
+            $editlink = new moodle_url("/enrol/elightenment/edit.php", array('courseid' => $instance->courseid, 'id' => $instance->id));
             $icons[] = $OUTPUT->action_icon($editlink, new pix_icon('t/edit', get_string('edit'), 'core',
                     array('class' => 'iconsmall')));
         }
@@ -103,12 +103,12 @@ class enrol_ecommerce_plugin extends enrol_plugin {
         public function get_newinstance_link($courseid) {
         $context = context_course::instance($courseid, MUST_EXIST);
 
-        if (!has_capability('moodle/course:enrolconfig', $context) or !has_capability('enrol/ecommerce:config', $context)) {
+        if (!has_capability('moodle/course:enrolconfig', $context) or !has_capability('enrol/elightenment:config', $context)) {
             return null;
         }
 
         //  multiple instances supported - different cost for different roles
-        return new moodle_url('/enrol/ecommerce/edit.php', array('courseid' => $courseid));
+        return new moodle_url('/enrol/elightenment/edit.php', array('courseid' => $courseid));
     }
 
     /**
@@ -154,7 +154,7 @@ class enrol_ecommerce_plugin extends enrol_plugin {
         }
 
         if (abs($cost) < 0.01) { //  no cost, other enrolment methods (instances) should be used
-            echo '<p>'.get_string('nocost', 'enrol_ecommerce').'</p>';
+            echo '<p>'.get_string('nocost', 'enrol_elightenment').'</p>';
         } else {
 
             $localisedcost = format_float($cost, 2, true);
@@ -176,14 +176,14 @@ class enrol_ecommerce_plugin extends enrol_plugin {
                 $userfirstname   = $USER->firstname;
                 $userlastname    = $USER->lastname;
                 $urlstring		 = $CFG->wwwroot;
-                $shopurl		 = $CFG->wwwroot.'/enrol/ecommerce/shop.php';
-                $keydb		 	 = $DB->get_records('enrol_ecommerce');
+                $shopurl		 = $CFG->wwwroot.'/enrol/elightenment/shop.php';
+                $keydb		 	 = $DB->get_records('enrol_elightenment');
 
                 foreach ($keydb as $record){
                     $authkey = $record->authkey;
                 }
 
-                include($CFG->dirroot.'/enrol/ecommerce/enrol.html');
+                include($CFG->dirroot.'/enrol/elightenment/enrol.html');
             }
 
         }
@@ -242,11 +242,11 @@ class enrol_ecommerce_plugin extends enrol_plugin {
         $instance = $ue->enrolmentinstance;
         $params = $manager->get_moodlepage()->url->params();
         $params['ue'] = $ue->id;
-        if ($this->allow_unenrol($instance) && has_capability("enrol/ecommerce:unenrol", $context)) {
+        if ($this->allow_unenrol($instance) && has_capability("enrol/elightenment:unenrol", $context)) {
             $url = new moodle_url('/enrol/unenroluser.php', $params);
             $actions[] = new user_enrolment_action(new pix_icon('t/delete', ''), get_string('unenrol', 'enrol'), $url, array('class' => 'unenrollink', 'rel' => $ue->id));
         }
-        if ($this->allow_manage($instance) && has_capability("enrol/ecommerce:manage", $context)) {
+        if ($this->allow_manage($instance) && has_capability("enrol/elightenment:manage", $context)) {
             $url = new moodle_url('/enrol/editenrolment.php', $params);
             $actions[] = new user_enrolment_action(new pix_icon('t/edit', ''), get_string('edit'), $url, array('class' => 'editenrollink', 'rel' => $ue->id));
         }

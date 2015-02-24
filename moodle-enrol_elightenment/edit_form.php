@@ -15,11 +15,11 @@
 //  along with Moodle.  If not, see <http:// www.gnu.org/licenses/>.
 
 /**
- * Elightenment ecommerce enrolment plugin.
+ * elightenment elightenment enrolment plugin.
  *
  * This plugin allows you to set up a course shop and shopping cart
  *
- * @package    enrol_ecommerce
+ * @package    enrol_elightenment
  * @copyright  2015 Gary McKnight
  * @license    http:// www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -32,7 +32,7 @@ require_once($CFG->libdir.'/formslib.php');
 /*
 * edit form
 */
-class enrol_ecommerce_edit_form extends moodleform {
+class enrol_elightenment_edit_form extends moodleform {
 
     /*
     *   setup
@@ -42,7 +42,7 @@ class enrol_ecommerce_edit_form extends moodleform {
 
         list($instance, $plugin, $context) = $this->_customdata;
 
-        $mform->addElement('header', 'header', get_string('pluginname', 'enrol_ecommerce'));
+        $mform->addElement('header', 'header', get_string('pluginname', 'enrol_elightenment'));
 
         // Set custom instance name
         $mform->addElement('text', 'name', get_string('custominstancename', 'enrol'));
@@ -51,15 +51,15 @@ class enrol_ecommerce_edit_form extends moodleform {
         //  Menu "allow paid subscription"
         $options = array(ENROL_INSTANCE_ENABLED => get_string('yes'),
                          ENROL_INSTANCE_DISABLED => get_string('no'));
-        $mform->addElement('select', 'status', get_string('status', 'enrol_ecommerce'), $options);
+        $mform->addElement('select', 'status', get_string('status', 'enrol_elightenment'), $options);
         $mform->setDefault('status', $plugin->get_config('status'));
 
         // Course cost
-        $mform->addElement('text', 'cost', get_string('cost', 'enrol_ecommerce'), array('size' => 4));
+        $mform->addElement('text', 'cost', get_string('cost', 'enrol_elightenment'), array('size' => 4));
         $mform->setType('cost', PARAM_RAW); //  Use unformat_float to get real value.
         $mform->setDefault('cost', format_float($plugin->get_config('cost'), 2, true));
         
-        $mform->addElement('advcheckbox', 'customint1', get_string('subscribe', 'enrol_ecommerce'), array(), array(0, 1));
+        $mform->addElement('advcheckbox', 'customint1', get_string('subscribe', 'enrol_elightenment'), array(), array(0, 1));
         $mform->setDefault('customint1', $plugin->get_config('customint1'));
 
         if ($instance->id) {
@@ -67,20 +67,20 @@ class enrol_ecommerce_edit_form extends moodleform {
         } else {
             $roles = get_default_enrol_roles($context, $plugin->get_config('roleid'));
         }
-        $mform->addElement('select', 'roleid', get_string('assignrole', 'enrol_ecommerce'), $roles);
+        $mform->addElement('select', 'roleid', get_string('assignrole', 'enrol_elightenment'), $roles);
         $mform->setDefault('roleid', $plugin->get_config('roleid'));
 
-        $mform->addElement('duration', 'enrolperiod', get_string('enrolperiod', 'enrol_ecommerce'), array('optional' => true, 'defaultunit' => 86400));
+        $mform->addElement('duration', 'enrolperiod', get_string('enrolperiod', 'enrol_elightenment'), array('optional' => true, 'defaultunit' => 86400));
         $mform->setDefault('enrolperiod', $plugin->get_config('enrolperiod'));
-        $mform->addHelpButton('enrolperiod', 'enrolperiod', 'enrol_ecommerce');
+        $mform->addHelpButton('enrolperiod', 'enrolperiod', 'enrol_elightenment');
 
-        $mform->addElement('date_time_selector', 'enrolstartdate', get_string('enrolstartdate', 'enrol_ecommerce'), array('optional' => true));
+        $mform->addElement('date_time_selector', 'enrolstartdate', get_string('enrolstartdate', 'enrol_elightenment'), array('optional' => true));
         $mform->setDefault('enrolstartdate', 0);
-        $mform->addHelpButton('enrolstartdate', 'enrolstartdate', 'enrol_ecommerce');
+        $mform->addHelpButton('enrolstartdate', 'enrolstartdate', 'enrol_elightenment');
 
-        $mform->addElement('date_time_selector', 'enrolenddate', get_string('enrolenddate', 'enrol_ecommerce'), array('optional' => true));
+        $mform->addElement('date_time_selector', 'enrolenddate', get_string('enrolenddate', 'enrol_elightenment'), array('optional' => true));
         $mform->setDefault('enrolenddate', 0);
-        $mform->addHelpButton('enrolenddate', 'enrolenddate', 'enrol_ecommerce');
+        $mform->addHelpButton('enrolenddate', 'enrolenddate', 'enrol_elightenment');
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
@@ -107,12 +107,12 @@ class enrol_ecommerce_edit_form extends moodleform {
         list($instance, $plugin, $context) = $this->_customdata;
 
         if (!empty($data['enrolenddate']) and $data['enrolenddate'] < $data['enrolstartdate']) {
-            $errors['enrolenddate'] = get_string('enrolenddaterror', 'enrol_ecommerce');
+            $errors['enrolenddate'] = get_string('enrolenddaterror', 'enrol_elightenment');
         }
 
         $cost = str_replace(get_string('decsep', 'langconfig'), '.', $data['cost']);
         if (!is_numeric($cost)) {
-            $errors['cost'] = get_string('costerror', 'enrol_ecommerce');
+            $errors['cost'] = get_string('costerror', 'enrol_elightenment');
         }
 
         return $errors;

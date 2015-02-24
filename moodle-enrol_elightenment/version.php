@@ -15,20 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Elightenment ecommerce enrolment plugin.
+ * elightenment elightenment enrolment plugin.
  *
  * This plugin allows you to set up a course shop and shopping cart
  *
- * @package    enrol_ecommerce
+ * @package    enrol_elightenment
  * @copyright  2015 Gary McKnight
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2015021100;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2014050800;        // Requires this Moodle version
-$plugin->release   = 'v1.2';
-$plugin->component = 'enrol_ecommerce';    // Full name of the plugin (used for diagnostics)
+$plugin->version   = 2015022300;
+$plugin->requires  = 2014050800;
+$plugin->release   = 'v1.4';
+$plugin->component = 'enrol_elightenment'; 
 $plugin->cron      = 600;
-$plugin->maturity  = MATURITY_STABLE;		// Still in testing phase
+$plugin->maturity  = MATURITY_STABLE;		

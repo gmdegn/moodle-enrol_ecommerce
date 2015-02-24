@@ -15,11 +15,11 @@
 //  along with Moodle.  If not, see <http:// www.gnu.org/licenses/>.
 
 /**
- * Elightenment ecommerce enrolment plugin.
+ * elightenment elightenment enrolment plugin.
  *
  * This plugin allows you to set up a course shop and shopping cart
  *
- * @package    enrol_ecommerce
+ * @package    enrol_elightenment
  * @copyright  2015 Gary McKnight
  * @license    http:// www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,40 +27,58 @@
 require_once('../../config.php');
 require_once('../../course/lib.php');
 require_once('../../lib/filelib.php');
-//require_once($CFG->wwwroot .'/course/lib.php');
-//require_once($CFG->libdir .'/filelib.php');
-
-session_name('MoodleSession');
-session_start();
 
 global $DB, $OUTPUT, $PAGE, $COURSE;
+
+if(! $DB->record_exists('enrol_elightenment', array())){
+    $ustg = base64_encode(json_encode($CFG->wwwroot));
+    header("Location: http://elightenmentlearning.com/payment/keyauth.php?ustg=".urlencode($ustg));
+    die();
+}
+
+// if the user isn't saved in the cart database, add them
+if(! $DB->record_exists('enrol_elightenment_cart', array('uid'=>$USER->id))){
+    $record = new stdClass();
+    $record->uid = $USER->id;
+    $record->cartvalues = '';
+    $insert = $DB->insert_record('enrol_elightenment_cart', $record, false);
+}
 
 // user must be logged in for purchasing classes to work
 require_login();
 
 // set up moodle page
 $PAGE->set_pagelayout('report');
-$PAGE->set_title(get_string('shopTitle', 'enrol_ecommerce'));
-$PAGE->set_heading(get_string('shopTitle', 'enrol_ecommerce'));
-$PAGE->set_url($CFG->wwwroot.'/enrol/ecommerce/shop.php');
+$PAGE->set_title(get_string('shopTitle', 'enrol_elightenment'));
+$PAGE->set_heading(get_string('shopTitle', 'enrol_elightenment'));
+$PAGE->set_url($CFG->wwwroot.'/enrol/elightenment/shop.php');
 $PAGE->set_cacheable(false);
 
-$plugin = enrol_get_plugin('ecommerce');
+$plugin = enrol_get_plugin('elightenment');
+
+$authrec = $DB->get_record('enrol_elightenment', array(), 'authkey');
+$authkey = $authrec->authkey;
 
 // check to see if the Cart has bee created yet. If not, create it; otherwise
 // push the course ID into the array. Then check to make sure the course hasn't been
-// added twice by mistake. If it has, erase any duplicate values.
-if (!isset($_SESSION['courseCart'])){
-    $_SESSION['courseCart'] = array();
-} else if (isset($_POST['id'])) {
-    array_push($_SESSION['courseCart'], $_POST['id']);
-    $_SESSION['courseCart'] = array_unique($_SESSION['courseCart']);
+// added twice by mistake. If it has, ignore duplicate values.
+$getid = optional_param('id', null, PARAM_INT);
+$cartstring = $DB->get_record('enrol_elightenment_cart', array('uid'=>$USER->id));
+$cartstringarray = json_decode(base64_decode($cartstring->cartvalues));
+if (! $cartstringarray){
+    $cartstringarray = array();
+}
+if (! empty($getid) && ! in_array($getid, $cartstringarray)) {
+    array_push($cartstringarray, $getid);
+    $dataobject = new stdClass();
+    $dataobject->id = $cartstring->id;
+    $dataobject->cartvalues = base64_encode(json_encode($cartstringarray));
+    $DB->update_record('enrol_elightenment_cart', $dataobject);
 }
 
 // --search bar-------------------------------------
 
-$sql = 'SELECT name, id FROM {course_categories}';
-$ccat = $DB->get_records_sql($sql, array(1));
+$ccat = $DB->get_records_select('course_categories', array(), null, 'name,id');
 
 // -------------------------------------------------
 
@@ -160,25 +178,25 @@ select {
 
 echo '<div class="content">';
 
-if (file_exists($CFG->wwwroot.'/enrol/ecommerce/pics/checkout.png')){
-    $checkoutstr = $CFG->wwwroot.'/enrol/ecommerce/pics/checkout.png';
+if (file_exists($CFG->wwwroot.'/enrol/elightenment/pics/checkout.png')){
+    $checkoutstr = $CFG->wwwroot.'/enrol/elightenment/pics/checkout.png';
 } else {
-    $checkoutstr = '<button id="cButt">'.get_string('cOutBttn', 'enrol_ecommerce').'</button>';
+    $checkoutstr = '<button id="cButt">'.get_string('cOutBttn', 'enrol_elightenment').'</button>';
 }
 
-$carturl = $CFG->wwwroot.'/enrol/ecommerce/cart.php';
+$carturl = $CFG->wwwroot.'/enrol/elightenment/cart.php';
 echo '
 <div id="checkout">
     <div id="search">
         <form method="GET" action="?">
             <select name="cat">
-                <option value="null" selected disabled>'.get_string('catSearch', 'enrol_ecommerce').'</option>';
+                <option value="null" selected disabled>'.get_string('catSearch', 'enrol_elightenment').'</option>';
                 foreach ($ccat as $y) {
                     echo '<option value="'.$y->id.'">'.$y->name.'</option>';
                 }
             echo' </select>
-            <input type="text" name="name" placeholder="'.get_string('nameSearch', 'enrol_ecommerce').'" autocomplete="on">
-            <input type="submit" value="'.get_string('search', 'enrol_ecommerce').'">
+            <input type="text" name="name" placeholder="'.get_string('nameSearch', 'enrol_elightenment').'" autocomplete="on">
+            <input type="submit" value="'.get_string('search', 'enrol_elightenment').'">
         </form>
     </div>
     <a href="'.$carturl.'">'.$checkoutstr.' </a>
@@ -208,16 +226,20 @@ foreach ($courses as $course){
 
     $summary = file_rewrite_pluginfile_urls($course->summary, 'pluginfile.php', $context->id, 'course', 'summary', null);
 
-    $sql = 'SELECT cost FROM {enrol} WHERE courseid = '.$course->id.' AND enrol = "ecommerce" ';
-    $cost = $DB->get_record_sql($sql, array(1));
+    // Get variables from the enrol table
+    $evars = $DB->get_record('enrol', array('courseid'=>$course->id, 'enrol'=>'elightenment'));
 
     $csearch = '*';
     $nsearch = '*';
-    if (isset($_GET['cat'])){
-        $csearch = $_GET['cat'];
+    
+    $getcat = optional_param('cat', null, PARAM_INT);
+    $getname = optional_param('name', null, PARAM_TEXT);
+    
+    if (! empty($getcat)){
+        $csearch = $getcat;
     }
-    if (isset($_GET['name'])){
-        if (strpos(strtolower($course->fullname), strtolower ($_GET['name'])) !== false){
+    if (! empty($getname)){
+        if (strpos(strtolower($course->fullname), strtolower ($getname)) !== false){
             $namesearch = true;
         } else {
             $namesearch = false;
@@ -227,15 +249,8 @@ foreach ($courses as $course){
     }
     $buttonString = '';
     
-    $sql = 'SELECT customint1 FROM {enrol} WHERE courseid = '.$course->id.' AND enrol = "ecommerce" ';
-    $subval = $DB->get_record_sql($sql, array(1));
-
-    foreach($DB->get_records('enrol_ecommerce') as $record){
-        $authkey = $record->authkey;
-    }
-    
     // Don't display the front page, don't display hidden courses and do not display a course that hasn't had a price set up yet.
-    if ($course->id != 1 && $course->visible == 1 && $cost->cost != null && fnmatch($csearch, $course->category) && $namesearch){
+    if ($course->id != 1 && $course->visible == 1 && $evars->cost != null && fnmatch($csearch, $course->category) && $namesearch){
 
         echo '<td><div class="storeInst" tabindex="0" id="'.$x.'"><div class="navbar-inner shopHeader"><div class="title"><strong>'.$course->fullname.'
         </strong><div class="plusMark">[+] </div></div></div><div class="coursebox shopDesc"><p>'.$summary.'</p><div class="buttons">';
@@ -244,26 +259,29 @@ foreach ($courses as $course){
         if ($enrolled){ echo '<b>You are already enrolled in this course!</b></div></div><br>';
 
         // Shop will not allow you to add course to cart twice. If this fails, it will still erase the duplicate entry.
-        } else if (in_array($course->id, $_SESSION['courseCart'])){
+        } else if (in_array($course->id, $cartstringarray)){
             echo '<b>Added to Cart!</b></div></div><br>';
 
         // To avoid using javascript, clicking the "add to cart" button will refresh the page with $_POST
-        // variables to add to the $_SESSION array. It will then jump back to the course which was clicked.
+        // variables to add to the database. It will then jump back to the course which was clicked.
+        
+        // Subscriptions will go to paypal right away until the server side scripts are updated to handle subscriptions in
+        // the cart with everything else.
         } else{
-            if($subval->customint1 == 1){
-                echo '<form method="POST" action="http://elightenmentlearning.com/payment/paypal.php"><b>$'.$cost->cost.' </b>
+            if($evars->customint1 == 1){
+                echo '<form method="POST" action="http://elightenmentlearning.com/payment/paypal.php"><b>$'.$evars->cost.' </b>
                 <input type="hidden" name="pID" value="'.base64_encode(json_encode(array($course->id))).'">
                 <input type="hidden" name="pName" value="'.base64_encode(json_encode(array($course->fullname))).'">
-                <input type="hidden" name="amt" value="'.base64_encode(json_encode(array($cost->cost))).'">
+                <input type="hidden" name="amt" value="'.base64_encode(json_encode(array($evars->cost))).'">
                 <input type="hidden" name="siteURL" value="'.$CFG->wwwroot.'">
                 <input type="hidden" name="authkey" value="'.$authkey.'">
                 <input type="hidden" name="uID" value="'.$USER->id.'">
                 <input type="hidden" name="subsc" value="true">
-                <input type="hidden" name="subLen" value="'.$plugin->get_config('enrolperiod').'">
-                <input type="submit" value="'.get_string('subscribe', 'enrol_ecommerce').'"></form></div></div></div><br>';
+                <input type="hidden" name="subLen" value="'.$evars->enrolperiod.'">
+                <input type="submit" value="'.get_string('subscribe', 'enrol_elightenment').'"></form></div></div></div><br>';
             } else {
-                echo '<form method="POST" action="#'.$x.'"><b>$'.$cost->cost.' </b>
-                <input type="hidden" name="id" value="'.$course->id.'"><input type="submit" value="'.get_string('sendpaymentbutton', 'enrol_ecommerce').'"></form></div></div></div><br>'; }
+                echo '<form method="POST" action="#'.$x.'"><b>$'.$evars->cost.' </b>
+                <input type="hidden" name="id" value="'.$course->id.'"><input type="submit" value="'.get_string('sendpaymentbutton', 'enrol_elightenment').'"></form></div></div></div><br>'; }
             }
         echo '</td>';
         $x++;
@@ -277,21 +295,6 @@ foreach ($courses as $course){
         echo '<td><div class="storeInst">No courses met your search criteria!</div></td></tr>';
     }
 echo '</table>';
-// -----DEBUG STUFF! Don't uncomment unless you want all your users to see all your course and session data!------//
-/*
-
-echo '<div style="width: 80%; height: 200px; overflow-y: auto; overflow-x: hidden; margin-left:-5%;">';
-print_r($courses);
-echo '</div><br><br>';
-
-echo '<form method="POST" action-"#"><input type="hidden" name="reset" value="1"><input type="submit" value="RESET"></form>';
-if($_POST['reset'] == 1){
-    $_SESSION['courseCart'] = array();
-}
-print_r($_SESSION['courseCart']);
-
-*/
-// ------ END DEBUG STUFF!---------------------------------------------------------------------------------------//
 
 echo $OUTPUT->footer();
 

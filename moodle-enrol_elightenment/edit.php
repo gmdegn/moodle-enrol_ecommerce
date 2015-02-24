@@ -15,11 +15,11 @@
 //  along with Moodle.  If not, see <http:// www.gnu.org/licenses/>.
 
 /**
- * Elightenment ecommerce enrolment plugin.
+ * elightenment elightenment enrolment plugin.
  *
  * This plugin allows you to set up a course shop and shopping cart
  *
- * @package    enrol_ecommerce
+ * @package    enrol_elightenment
  * @copyright  2015 Gary McKnight
  * @license    http:// www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -35,20 +35,20 @@ $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 $context = context_course::instance($course->id, MUST_EXIST);
 
 require_login($course);
-require_capability('enrol/ecommerce:config', $context);
+require_capability('enrol/elightenment:config', $context);
 
-$PAGE->set_url('/enrol/ecommerce/edit.php', array('courseid' => $course->id, 'id' => $instanceid));
+$PAGE->set_url('/enrol/elightenment/edit.php', array('courseid' => $course->id, 'id' => $instanceid));
 $PAGE->set_pagelayout('admin');
 
 $return = new moodle_url('/enrol/instances.php', array('id' => $course->id));
-if (!enrol_is_enabled('ecommerce')) {
+if (!enrol_is_enabled('elightenment')) {
     redirect($return);
 }
 
-$plugin = enrol_get_plugin('ecommerce');
+$plugin = enrol_get_plugin('elightenment');
 
 if ($instanceid) {
-    $instance = $DB->get_record('enrol', array('courseid' => $course->id, 'enrol' => 'ecommerce', 'id' => $instanceid), '*', MUST_EXIST);
+    $instance = $DB->get_record('enrol', array('courseid' => $course->id, 'enrol' => 'elightenment', 'id' => $instanceid), '*', MUST_EXIST);
     $instance->cost = format_float($instance->cost, 2, true);
 } else {
     require_capability('moodle/course:enrolconfig', $context);
@@ -59,7 +59,7 @@ if ($instanceid) {
     $instance->courseid = $course->id;
 }
 
-$mform = new enrol_ecommerce_edit_form(null, array($instance, $plugin, $context));
+$mform = new enrol_elightenment_edit_form(null, array($instance, $plugin, $context));
 
 if ($mform->is_cancelled()) {
     redirect($return);
@@ -92,9 +92,9 @@ if ($mform->is_cancelled()) {
 }
 
 $PAGE->set_heading($course->fullname);
-$PAGE->set_title(get_string('pluginname', 'enrol_ecommerce'));
+$PAGE->set_title(get_string('pluginname', 'enrol_elightenment'));
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('pluginname', 'enrol_ecommerce'));
+echo $OUTPUT->heading(get_string('pluginname', 'enrol_elightenment'));
 $mform->display();
 echo $OUTPUT->footer();

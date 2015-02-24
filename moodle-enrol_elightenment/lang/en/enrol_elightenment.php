@@ -15,11 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Elightenment ecommerce enrolment plugin.
+ * elightenment elightenment enrolment plugin.
  *
  * This plugin allows you to set up a course shop and shopping cart
  *
- * @package    enrol_ecommerce
+ * @package    enrol_elightenment
  * @copyright  2015 Gary McKnight
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -58,13 +58,13 @@ $string['mailadmins'] = 'Notify admin';
 $string['mailstudents'] = 'Notify students';
 $string['mailteachers'] = 'Notify teachers';
 $string['nocost'] = 'There is no cost for this course!';
-$string['ecommerce:config'] = 'Configure enrol instances';
-$string['ecommerce:manage'] = 'Manage enrolled users';
-$string['ecommerce:unenrol'] = 'Unenrol users from course';
-$string['ecommerce:unenrolself'] = 'Unenrol self from the course';
-$string['pluginname'] = 'Ecommerce';
-$string['pluginname_desc'] = 'Elightenment Learning payment system';
+$string['elightenment:config'] = 'Configure enrol instances';
+$string['elightenment:manage'] = 'Manage enrolled users';
+$string['elightenment:unenrol'] = 'Unenrol users from course';
+$string['elightenment:unenrolself'] = 'Unenrol self from the course';
+$string['pluginname'] = 'Elightenment';
+$string['pluginname_desc'] = 'elightenment Learning payment system';
 $string['sendpaymentbutton'] = 'Add to Cart';
 $string['status'] = 'Allow paid enrolments';
-$string['status_desc'] = 'Allow users to use Ecommerce to enrol into a course by default.';
+$string['status_desc'] = 'Allow users to use elightenment to enrol into a course by default.';
 $string['unenrolselfconfirm'] = 'Do you really want to unenrol yourself from course "{$a}"?';

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="enrol/elightenment/db" VERSION="20150215" COMMENT="XMLDB file for Moodle enrol/elightenment"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="enrol_elightenment" COMMENT="">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="authkey" TYPE="char" LENGTH="16" NOTNULL="false" SEQUENCE="false" COMMENT="auth key"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="enrol_elightenment_cart" COMMENT="Database for elightenment cart values">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+		<FIELD NAME="uid" TYPE="int" NOTNULL="true" SEQUENCE="false" COMMENT="user id"/>
+        <FIELD NAME="cartvalues" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="encoded value for saved courses"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>

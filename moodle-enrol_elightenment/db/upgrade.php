@@ -15,11 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Elightenment ecommerce enrolment plugin.
+ * elightenment elightenment enrolment plugin.
  *
  * This plugin allows you to set up a course shop and shopping cart
  *
- * @package    enrol_ecommerce
+ * @package    enrol_elightenment
  * @copyright  2015 Gary McKnight
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,7 +27,7 @@
 /**
 * upgrade from old version
 */
-function xmldb_enrol_ecommerce_upgrade($oldversion) {
+function xmldb_enrol_elightenment_upgrade($oldversion) {
     global $CFG, $DB;
 
     $dbman = $DB->get_manager();

@@ -15,11 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Elightenment ecommerce enrolment plugin.
+ * elightenment elightenment enrolment plugin.
  *
  * This plugin allows you to set up a course shop and shopping cart
  *
- * @package    enrol_ecommerce
+ * @package    enrol_elightenment
  * @copyright  2015 Gary McKnight
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -46,15 +46,15 @@ Options:
 -h, --help            Print out this help
 
 Example:
-\$ sudo -u www-data /usr/bin/php enrol/ecommerce/sync.php
+\$ sudo -u www-data /usr/bin/php enrol/elightenment/sync.php
 ";
 
     echo $help;
     die;
 }
 
-if (!enrol_is_enabled('ecommerce')) {
-    cli_error('enrol_ecommerce plugin is disabled, synchronisation stopped', 2);
+if (!enrol_is_enabled('elightenment')) {
+    cli_error('enrol_elightenment plugin is disabled, synchronisation stopped', 2);
 }
 
 if (empty($options['verbose'])) {
@@ -63,8 +63,8 @@ if (empty($options['verbose'])) {
     $trace = new text_progress_trace();
 }
 
-/* @var $plugin enrol_ecommerce_plugin */
-$plugin = enrol_get_plugin('ecommerce');
+/* @var $plugin enrol_elightenment_plugin */
+$plugin = enrol_get_plugin('elightenment');
 
 $result = $plugin->sync($trace, null);
 $plugin->send_expiry_notifications($trace);

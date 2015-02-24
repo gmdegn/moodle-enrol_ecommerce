@@ -15,21 +15,18 @@
 //  along with Moodle.  If not, see <http:// www.gnu.org/licenses/>.
 
 /**
- * Elightenment ecommerce enrolment plugin.
+ * elightenment elightenment enrolment plugin.
  *
  * This plugin allows you to set up a course shop and shopping cart
  *
- * @package    enrol_ecommerce
+ * @package    enrol_elightenment
  * @copyright  2015 Gary McKnight
  * @license    http:// www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once('../../config.php');
-require_once($CFG->wwwroot .'/course/lib.php');
-require_once($CFG->libdir .'/filelib.php');
-
-session_name('MoodleSession');
-session_start();
+require_once('../../course/lib.php');
+require_once('../../lib/filelib.php');
 
 global $DB, $OUTPUT, $PAGE, $USER;
 
@@ -38,43 +35,43 @@ require_login();
 
 // set up moodle page
 $PAGE->set_pagelayout('report');
-$PAGE->set_title(get_string('cartTitle', 'enrol_ecommerce'));
-$PAGE->set_heading(get_string('cartTitle', 'enrol_ecommerce'));
-$PAGE->set_url($CFG->wwwroot.'/enrol/ecommerce/cart.php');
+$PAGE->set_title(get_string('cartTitle', 'enrol_elightenment'));
+$PAGE->set_heading(get_string('cartTitle', 'enrol_elightenment'));
+$PAGE->set_url($CFG->wwwroot.'/enrol/elightenment/cart.php');
 $PAGE->set_cacheable(false);
 
 // check to see if the Cart has bee created yet. If not, create it; otherwise
 // push the course ID into the array. Then check to make sure the course hasn't been
-// added twice by mistake. If it has, erase any duplicate values.
-if (!isset($_SESSION['courseCart'])){
-    $_SESSION['courseCart'] = array();
-} else if (isset($_POST['id'])) {
-    array_push($_SESSION['courseCart'], $_POST['id']);
-    $_SESSION['courseCart'] = array_unique($_SESSION['courseCart']);
+// added twice by mistake. If it has, ignore any duplicate values.
+$getid = optional_param('id', null, PARAM_INT);
+$cartstring = $DB->get_record('enrol_elightenment_cart', array('uid'=>$USER->id));
+$cartstringarray = json_decode(base64_decode($cartstring->cartvalues));
+if (! $cartstringarray){
+    $cartstringarray = array();
 }
-    // This will sort the array so that classes are in ascending order by their ID values.
-    asort($_SESSION['courseCart']);
+// This will sort the array so that classes are in ascending order by their ID values.
+asort($cartstringarray);
 
+$authrec = $DB->get_record('enrol_elightenment', array(), 'authkey');
+$authkey = $authrec->authkey;
 
 $courses = get_courses();
 $total = 0;
 $idarray = array();
 $namearray = array();
 $amtarray = array();
-$urlstring = $CFG->wwwroot;
-$keydb = $DB->get_records('enrol_ecommerce');
-$press = '';
-
-foreach($keydb as $record){
-    $authkey = $record->authkey;
-}
 
 // If 'remove' was clicked, this will find the key of the id value and unset it.
 // Then it will redo the SESSION array so that it doesn't have any blank spaces.
-if (isset($_POST['remove'])){
-    $key = array_search($_POST['remove']);
-    unset($_SESSION['courseCart']);
-    $_SESSION['courseCart'] = array_values($_SESSION['courseCart']);
+$getremove = optional_param('remove', null, PARAM_INT);
+if (! empty($getremove)){
+    $key = array_search($getremove, $cartstringarray);
+    unset($cartstringarray[$key]);
+    $cartstringarray = array_values($cartstringarray);
+    $dataobject = new stdClass();
+    $dataobject->id = $cartstring->id;
+    $dataobject->cartvalues = base64_encode(json_encode($cartstringarray));
+    $DB->update_record('enrol_elightenment_cart', $dataobject);
 }
 
 echo $OUTPUT->header();
@@ -131,76 +128,62 @@ b:not(#ignore) {
 
     echo '<div class="content">';
 
-    if (empty($_SESSION['courseCart'])){
+    if (empty($cartstringarray)){
         echo '<div class="coursebox"><strong><br>Your Cart Is Empty!<hr></strong></div>';
         $press = 'disabled';
+    } else {
+        $press = '';
     }
 
 
-    foreach ($_SESSION['courseCart'] as $courseid){
-        // This is a really innefficient way to find out which course was selected using it's ID. Ideally I would simply search the database of courses by ID and pull up the record,
-        // but it isn't cooperating. Will be fixed later.
+    foreach ($cartstringarray as $courseid){
         foreach ($courses as $search){
             if ($search->id == $courseid){
                 $found = $search;
             }
         }
         // find the cost of the course from the moodle database.
-        $sql = 'SELECT cost FROM {enrol} WHERE courseid = '.$found->id.' AND enrol = "ecommerce" ';
-        $cost = $DB->get_record_sql($sql, array(1));
+        $evars = $DB->get_record('enrol', array('courseid'=>$found->id, 'enrol'=>'elightenment'));
 
         echo '
             <div class="coursebox">
                 <div class="title">
                     <strong>'.$found->fullname.'</strong>
-                    <b>$'.$cost->cost.' </b>
+                    <b>$'.$evars->cost.' </b>
                 </div>
                 <div class="buttons">
                     <form method="POST" action="#">
                         <input type="hidden" name="remove" value="'.$found->id.'">
-                        <input type="submit" value="'.get_string('removeCourse', 'enrol_ecommerce').'">
+                        <input type="submit" value="'.get_string('removeCourse', 'enrol_elightenment').'">
                     </form>
                 </div>
             </div>';
 
-        $total += $cost->cost;
+        $total += $evars->cost;
 
         array_push($idarray, $found->id);
         array_push($namearray, $found->fullname);
-        array_push($amtarray, $cost->cost);
+        array_push($amtarray, $evars->cost);
     }
-    $NAMEs = base64_encode(json_encode($namearray));
-    $IDs = base64_encode(json_encode($idarray));
-    $AMTs = base64_encode(json_encode($amtarray));
+    $names = base64_encode(json_encode($namearray));
+    $ids = base64_encode(json_encode($idarray));
+    $amts = base64_encode(json_encode($amtarray));
 
     echo '<br>
     <div class="navbar-inner" id="totals">
         <b id="ignore">Total: </b>$'.$total.'
         <br>
         <form method="POST" action="http://elightenmentlearning.com/payment/paypal.php">
-            <input type="hidden" name="pID" value="'.$IDs.'">
-            <input type="hidden" name="pName" value="'.$NAMEs.'">
-            <input type="hidden" name="amt" value="'.$AMTs.'">
-            <input type="hidden" name="siteURL" value="'.$urlstring.'">
+            <input type="hidden" name="pID" value="'.$ids.'">
+            <input type="hidden" name="pName" value="'.$names.'">
+            <input type="hidden" name="amt" value="'.$amts.'">
+            <input type="hidden" name="siteURL" value="'.$CFG->wwwroot.'">
             <input type="hidden" name="authkey" value="'.$authkey.'">
             <input type="hidden" name="uID" value="'.$USER->id.'">
-            <input type="submit" value="'.get_string('purchase', 'enrol_ecommerce').'" '.$press.'>
+            <input type="submit" value="'.get_string('purchase', 'enrol_elightenment').'" '.$press.'>
         </form>
     </div>
     </div>';
-
-// -----DEBUG STUFF! Don't uncomment unless you want all your users to see all your course and session data!------//
-/*
-print_r($_SESSION['courseCart']);
-echo'<br>';
-print_r($coursecontext);
-echo'<br>';
-print_r($courses);
-echo'<br>';
-print_r($cost);
-echo $cost->cost;
-*/
-// ------ END DEBUG STUFF!---------------------------------------------------------------------------------------//
 
 echo $OUTPUT->footer();
 

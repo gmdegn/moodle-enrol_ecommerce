@@ -15,11 +15,11 @@
 //  along with Moodle.  If not, see <http:// www.gnu.org/licenses/>.
 
 /**
- * Elightenment ecommerce enrolment plugin.
+ * elightenment elightenment enrolment plugin.
  *
  * This plugin allows you to set up a course shop and shopping cart
  *
- * @package    enrol_ecommerce
+ * @package    enrol_elightenment
  * @copyright  2015 Gary McKnight
  * @license    http:// www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -32,7 +32,7 @@ require_once($CFG->libdir.'/eventslib.php');
 require_once($CFG->libdir.'/enrollib.php');
 require_once($CFG->libdir . '/filelib.php');
 
-set_exception_handler('enrol_ecommerce_ipn_exception_handler');
+set_exception_handler('enrol_elightenment_ipn_exception_handler');
 
 $cdata = get_courses();
 
@@ -79,7 +79,7 @@ foreach ($courses as $courseID){
 }
 
 // loop through every course and register the user
-$enrolname = 'ecommerce';
+$enrolname = 'elightenment';
 $enrol = enrol_get_plugin($enrolname);
 
 foreach ($creg as $course){

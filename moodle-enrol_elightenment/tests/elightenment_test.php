@@ -15,11 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Elightenment ecommerce enrolment plugin.
+ * elightenment elightenment enrolment plugin.
  *
  * This plugin allows you to set up a course shop and shopping cart
  *
- * @package    enrol_ecommerce
+ * @package    enrol_elightenment
  * @copyright  2015 Gary McKnight
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,16 +28,16 @@
 defined('MOODLE_INTERNAL') || die();
 
 /*
-* ecommerce testcase
+* elightenment testcase
 */
-class enrol_ecommerce_testcase extends advanced_testcase {
+class enrol_elightenment_testcase extends advanced_testcase {
 
     /*
     * enable plugin function
     */
     protected function enable_plugin() {
         $enabled = enrol_get_plugins(true);
-        $enabled['ecommerce'] = true;
+        $enabled['elightenment'] = true;
         $enabled = array_keys($enabled);
         set_config('enrol_plugins_enabled', implode(',', $enabled));
     }
@@ -47,23 +47,23 @@ class enrol_ecommerce_testcase extends advanced_testcase {
     */
     protected function disable_plugin() {
         $enabled = enrol_get_plugins(true);
-        unset($enabled['ecommerce']);
+        unset($enabled['elightenment']);
         $enabled = array_keys($enabled);
         set_config('enrol_plugins_enabled', implode(',', $enabled));
     }
 
     public function test_basics() {
-        $this->assertFalse(enrol_is_enabled('ecommerce'));
-        $plugin = enrol_get_plugin('ecommerce');
-        $this->assertInstanceOf('enrol_ecommerce_plugin', $plugin);
-        $this->assertEquals(ENROL_EXT_REMOVED_SUSPENDNOROLES, get_config('enrol_ecommerce', 'expiredaction'));
+        $this->assertFalse(enrol_is_enabled('elightenment'));
+        $plugin = enrol_get_plugin('elightenment');
+        $this->assertInstanceOf('enrol_elightenment_plugin', $plugin);
+        $this->assertEquals(ENROL_EXT_REMOVED_SUSPENDNOROLES, get_config('enrol_elightenment', 'expiredaction'));
     }
 
     public function test_sync_nothing() {
         $this->resetAfterTest();
 
         $this->enable_plugin();
-        $ecomplugin = enrol_get_plugin('ecommerce');
+        $ecomplugin = enrol_get_plugin('elightenment');
 
         // Just make sure the sync does not throw any errors when nothing to do.
         $ecomplugin->sync(new null_progress_trace());
@@ -73,8 +73,8 @@ class enrol_ecommerce_testcase extends advanced_testcase {
         global $DB;
         $this->resetAfterTest();
 
-        /* @var enrol_ecommerce_plugin $ecomplugin  */
-        $ecomplugin = enrol_get_plugin('ecommerce');
+        /* @var enrol_elightenment_plugin $ecomplugin  */
+        $ecomplugin = enrol_get_plugin('elightenment');
         /* @var enrol_manual_plugin $manualplugin  */
         $manualplugin = enrol_get_plugin('manual');
         $this->assertNotEmpty($manualplugin);
