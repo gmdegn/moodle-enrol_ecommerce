@@ -28,41 +28,46 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
-* elightenment plugin lib file
-*/
+ * elightenment plugin lib file
+ */
 class enrol_elightenment_plugin extends enrol_plugin {
 
+    public function can_hide_show_instance(stdClass $instance) {
+        $context = context_course::instance($instance->courseid);
+        return has_capability('enrol/mnet:config', $context);
+    }
+
     /**
-    * users with role assign cap may tweak the roles later
-    */
+     * users with role assign cap may tweak the roles later
+     */
     public function roles_protected() {
         return false;
     }
 
     /**
-    * users with unenrol cap may unenrol other users manually - requires enrol/elightenment:unenrol
-    */
+     * users with unenrol cap may unenrol other users manually - requires enrol/elightenment:unenrol
+     */
     public function allow_unenrol(stdClass $instance) {
         return true;
     }
 
     /**
-    * users with manage cap may tweak period and status - requires enrol/elightenment:manage
-    */
+     * users with manage cap may tweak period and status - requires enrol/elightenment:manage
+     */
     public function allow_manage(stdClass $instance) {
         return true;
     }
 
     /**
-    * show link
-    */
+     * show link
+     */
     public function show_enrolme_link(stdClass $instance) {
         return ($instance->status == ENROL_INSTANCE_ENABLED);
     }
 
     /**
-    * add navigation
-    */
+     * add navigation
+     */
     public function add_course_navigation($instancesnode, stdClass $instance) {
         if ($instance->enrol !== 'elightenment') {
              throw new coding_exception('Invalid enrol instance type!');
@@ -76,8 +81,8 @@ class enrol_elightenment_plugin extends enrol_plugin {
     }
 
     /**
-    * get icons
-    */
+     * get icons
+     */
     public function get_action_icons(stdClass $instance) {
         global $OUTPUT;
 
@@ -98,9 +103,9 @@ class enrol_elightenment_plugin extends enrol_plugin {
     }
 
         /**
-        * get link
-        */
-        public function get_newinstance_link($courseid) {
+         * get link
+         */
+    public function get_newinstance_link($courseid) {
         $context = context_course::instance($courseid, MUST_EXIST);
 
         if (!has_capability('moodle/course:enrolconfig', $context) or !has_capability('enrol/elightenment:config', $context)) {
@@ -112,8 +117,8 @@ class enrol_elightenment_plugin extends enrol_plugin {
     }
 
     /**
-    * hook html file under course
-    */
+     * hook html file under course
+     */
     public function enrol_page_hook(stdClass $instance) {
         global $CFG, $USER, $OUTPUT, $PAGE, $DB;
 
@@ -172,14 +177,14 @@ class enrol_elightenment_plugin extends enrol_plugin {
                 echo '</div>';
             } else {
                 $coursefullname  = format_string($course->fullname, true, array('context' => $context));
-                $courseid 		 = $instance->courseid;
+                $courseid        = $instance->courseid;
                 $userfirstname   = $USER->firstname;
                 $userlastname    = $USER->lastname;
-                $urlstring		 = $CFG->wwwroot;
-                $shopurl		 = $CFG->wwwroot.'/enrol/elightenment/shop.php';
-                $keydb		 	 = $DB->get_records('enrol_elightenment');
+                $urlstring       = $CFG->wwwroot;
+                $shopurl         = $CFG->wwwroot.'/enrol/elightenment/shop.php';
+                $keydb           = $DB->get_records('enrol_elightenment');
 
-                foreach ($keydb as $record){
+                foreach ($keydb as $record) {
                     $authkey = $record->authkey;
                 }
 
@@ -192,8 +197,8 @@ class enrol_elightenment_plugin extends enrol_plugin {
     }
 
     /**
-    * restore instance
-    */
+     * restore instance
+     */
     public function restore_instance(restore_enrolments_structure_step $step, stdClass $data, $course, $oldid) {
         global $DB;
         if ($step->get_task()->get_target() == backup::TARGET_NEW_COURSE) {
@@ -217,25 +222,25 @@ class enrol_elightenment_plugin extends enrol_plugin {
     }
 
     /**
-    * Restore user enrolment.
-    *
-    * @param restore_enrolments_structure_step $step
-    * @param stdClass $data
-    * @param stdClass $instance
-    * @param int $oldinstancestatus
-    * @param int $userid
-    */
+     * Restore user enrolment.
+     *
+     * @param restore_enrolments_structure_step $step
+     * @param stdClass $data
+     * @param stdClass $instance
+     * @param int $oldinstancestatus
+     * @param int $userid
+     */
     public function restore_user_enrolment(restore_enrolments_structure_step $step, $data, $instance, $userid, $oldinstancestatus) {
         $this->enrol_user($instance, $userid, null, $data->timestart, $data->timeend, $data->status);
     }
 
     /**
-    * Gets an array of the user enrolment actions
-    *
-    * @param course_enrolment_manager $manager
-    * @param stdClass $ue A user enrolment object
-    * @return array An array of user_enrolment_actions
-    */
+     * Gets an array of the user enrolment actions
+     *
+     * @param course_enrolment_manager $manager
+     * @param stdClass $ue A user enrolment object
+     * @return array An array of user_enrolment_actions
+     */
     public function get_user_enrolment_actions(course_enrolment_manager $manager, $ue) {
         $actions = array();
         $context = $manager->get_context();
@@ -254,18 +259,18 @@ class enrol_elightenment_plugin extends enrol_plugin {
     }
 
     /**
-    *   cron job
-    */
+     *   cron job
+     */
     public function cron() {
         $trace = new text_progress_trace();
         $this->process_expirations($trace);
     }
 
     /**
-    * Execute synchronisation.
-    * @param progress_trace $trace
-    * @return int exit code, 0 means ok
-    */
+     * Execute synchronisation.
+     * @param progress_trace $trace
+     * @return int exit code, 0 means ok
+     */
     public function sync(progress_trace $trace) {
         $this->process_expirations($trace);
         return 0;

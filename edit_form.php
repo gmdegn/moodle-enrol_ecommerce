@@ -58,8 +58,8 @@ class enrol_elightenment_edit_form extends moodleform {
         $mform->addElement('text', 'cost', get_string('cost', 'enrol_elightenment'), array('size' => 4));
         $mform->setType('cost', PARAM_RAW); //  Use unformat_float to get real value.
         $mform->setDefault('cost', format_float($plugin->get_config('cost'), 2, true));
-        
-        $mform->addElement('advcheckbox', 'customint1', get_string('subscribe', 'enrol_elightenment'), array(), array(0, 1));
+
+        $mform->addElement('advcheckbox', 'customint1', get_string('subscribe', 'enrol_elightenment'), ' ', array('group' => 1), array(0, 1));
         $mform->setDefault('customint1', $plugin->get_config('customint1'));
 
         if ($instance->id) {
@@ -98,8 +98,8 @@ class enrol_elightenment_edit_form extends moodleform {
     }
 
     /**
-    * validate
-    */
+     * validate
+     */
     public function validation($data, $files) {
         global $DB, $CFG;
         $errors = parent::validation($data, $files);

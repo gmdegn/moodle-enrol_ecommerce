@@ -44,9 +44,9 @@ $PAGE->set_cacheable(false);
 // push the course ID into the array. Then check to make sure the course hasn't been
 // added twice by mistake. If it has, ignore any duplicate values.
 $getid = optional_param('id', null, PARAM_INT);
-$cartstring = $DB->get_record('enrol_elightenment_cart', array('uid'=>$USER->id));
+$cartstring = $DB->get_record('enrol_elightenment_cart', array('uid' => $USER->id));
 $cartstringarray = json_decode(base64_decode($cartstring->cartvalues));
-if (! $cartstringarray){
+if (! $cartstringarray) {
     $cartstringarray = array();
 }
 // This will sort the array so that classes are in ascending order by their ID values.
@@ -64,7 +64,7 @@ $amtarray = array();
 // If 'remove' was clicked, this will find the key of the id value and unset it.
 // Then it will redo the SESSION array so that it doesn't have any blank spaces.
 $getremove = optional_param('remove', null, PARAM_INT);
-if (! empty($getremove)){
+if (! empty($getremove)) {
     $key = array_search($getremove, $cartstringarray);
     unset($cartstringarray[$key]);
     $cartstringarray = array_values($cartstringarray);
@@ -126,50 +126,49 @@ b:not(#ignore) {
 }
 </style>';
 
-    echo '<div class="content">';
+echo '<div class="content">';
 
-    if (empty($cartstringarray)){
-        echo '<div class="coursebox"><strong><br>Your Cart Is Empty!<hr></strong></div>';
-        $press = 'disabled';
-    } else {
-        $press = '';
-    }
+if (empty($cartstringarray)) {
+    echo '<div class="coursebox"><strong><br>Your Cart Is Empty!<hr></strong></div>';
+    $press = 'disabled';
+} else {
+    $press = '';
+}
 
-
-    foreach ($cartstringarray as $courseid){
-        foreach ($courses as $search){
-            if ($search->id == $courseid){
-                $found = $search;
-            }
+foreach ($cartstringarray as $courseid) {
+    foreach ($courses as $search) {
+        if ($search->id == $courseid) {
+            $found = $search;
         }
-        // find the cost of the course from the moodle database.
-        $evars = $DB->get_record('enrol', array('courseid'=>$found->id, 'enrol'=>'elightenment'));
+    }
+    // Find the cost of the course from the moodle database.
+    $evars = $DB->get_record('enrol', array('courseid' => $found->id, 'enrol' => 'elightenment'));
 
-        echo '
-            <div class="coursebox">
-                <div class="title">
-                    <strong>'.$found->fullname.'</strong>
-                    <b>$'.$evars->cost.' </b>
+    echo '
+        <div class="coursebox">
+            <div class="title">
+                <strong>'.$found->fullname.'</strong>
+                <b>$'.$evars->cost.' </b>
                 </div>
                 <div class="buttons">
-                    <form method="POST" action="#">
-                        <input type="hidden" name="remove" value="'.$found->id.'">
-                        <input type="submit" value="'.get_string('removeCourse', 'enrol_elightenment').'">
-                    </form>
-                </div>
-            </div>';
+                <form method="POST" action="#">
+                    <input type="hidden" name="remove" value="'.$found->id.'">
+                    <input type="submit" value="'.get_string('removeCourse', 'enrol_elightenment').'">
+                </form>
+            </div>
+        </div>';
 
-        $total += $evars->cost;
+    $total += $evars->cost;
 
-        array_push($idarray, $found->id);
-        array_push($namearray, $found->fullname);
-        array_push($amtarray, $evars->cost);
-    }
-    $names = base64_encode(json_encode($namearray));
-    $ids = base64_encode(json_encode($idarray));
-    $amts = base64_encode(json_encode($amtarray));
+    array_push($idarray, $found->id);
+    array_push($namearray, $found->fullname);
+    array_push($amtarray, $evars->cost);
+}
+$names = base64_encode(json_encode($namearray));
+$ids = base64_encode(json_encode($idarray));
+$amts = base64_encode(json_encode($amtarray));
 
-    echo '<br>
+echo '<br>
     <div class="navbar-inner" id="totals">
         <b id="ignore">Total: </b>$'.$total.'
         <br>
@@ -186,5 +185,3 @@ b:not(#ignore) {
     </div>';
 
 echo $OUTPUT->footer();
-
-?>

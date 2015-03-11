@@ -25,8 +25,8 @@
  */
 
 /**
-* upgrade from old version
-*/
+ * upgrade from old version
+ */
 function xmldb_enrol_elightenment_upgrade($oldversion) {
     global $CFG, $DB;
 

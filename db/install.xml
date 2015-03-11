@@ -16,7 +16,7 @@
     <TABLE NAME="enrol_elightenment_cart" COMMENT="Database for elightenment cart values">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-		<FIELD NAME="uid" TYPE="int" NOTNULL="true" SEQUENCE="false" COMMENT="user id"/>
+		<FIELD NAME="uid" TYPE="int" LENGTH="16" NOTNULL="true" SEQUENCE="false" COMMENT="user id"/>
         <FIELD NAME="cartvalues" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="encoded value for saved courses"/>
       </FIELDS>
       <KEYS>

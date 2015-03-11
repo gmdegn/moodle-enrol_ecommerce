@@ -30,14 +30,14 @@ require_once('../../lib/filelib.php');
 
 global $DB, $OUTPUT, $PAGE, $COURSE;
 
-if(! $DB->record_exists('enrol_elightenment', array())){
+if(! $DB->record_exists('enrol_elightenment', array())) {
     $ustg = base64_encode(json_encode($CFG->wwwroot));
     header("Location: http://elightenmentlearning.com/payment/keyauth.php?ustg=".urlencode($ustg));
     die();
 }
 
 // if the user isn't saved in the cart database, add them
-if(! $DB->record_exists('enrol_elightenment_cart', array('uid'=>$USER->id))){
+if(! $DB->record_exists('enrol_elightenment_cart', array('uid' => $USER->id))) {
     $record = new stdClass();
     $record->uid = $USER->id;
     $record->cartvalues = '';
@@ -63,9 +63,9 @@ $authkey = $authrec->authkey;
 // push the course ID into the array. Then check to make sure the course hasn't been
 // added twice by mistake. If it has, ignore duplicate values.
 $getid = optional_param('id', null, PARAM_INT);
-$cartstring = $DB->get_record('enrol_elightenment_cart', array('uid'=>$USER->id));
+$cartstring = $DB->get_record('enrol_elightenment_cart', array('uid' => $USER->id));
 $cartstringarray = json_decode(base64_decode($cartstring->cartvalues));
-if (! $cartstringarray){
+if (! $cartstringarray) {
     $cartstringarray = array();
 }
 if (! empty($getid) && ! in_array($getid, $cartstringarray)) {
@@ -178,7 +178,7 @@ select {
 
 echo '<div class="content">';
 
-if (file_exists($CFG->wwwroot.'/enrol/elightenment/pics/checkout.png')){
+if (file_exists($CFG->wwwroot.'/enrol/elightenment/pics/checkout.png')) {
     $checkoutstr = $CFG->wwwroot.'/enrol/elightenment/pics/checkout.png';
 } else {
     $checkoutstr = '<button id="cButt">'.get_string('cOutBttn', 'enrol_elightenment').'</button>';
@@ -213,11 +213,11 @@ echo '<table>
 
 /* for each course in the catalog (excluding the front page which has an id of '1' and any course that are hidden)
 print the course fullname, id, description and a button to add to cart */
-foreach ($courses as $course){
+foreach ($courses as $course) {
 
     // there are two courses per row, so every other course beginning with the first will start a new row.
     $test = $x % 2;
-    if ( $test == 0 ){
+    if ( $test == 0 ) {
         echo '<tr>';
     }
 
@@ -227,19 +227,19 @@ foreach ($courses as $course){
     $summary = file_rewrite_pluginfile_urls($course->summary, 'pluginfile.php', $context->id, 'course', 'summary', null);
 
     // Get variables from the enrol table
-    $evars = $DB->get_record('enrol', array('courseid'=>$course->id, 'enrol'=>'elightenment'));
+    $evars = $DB->get_record('enrol', array('courseid' => $course->id, 'enrol' => 'elightenment'));
 
     $csearch = '*';
     $nsearch = '*';
-    
+
     $getcat = optional_param('cat', null, PARAM_INT);
     $getname = optional_param('name', null, PARAM_TEXT);
-    
-    if (! empty($getcat)){
+
+    if (! empty($getcat)) {
         $csearch = $getcat;
     }
-    if (! empty($getname)){
-        if (strpos(strtolower($course->fullname), strtolower ($getname)) !== false){
+    if (! empty($getname)) {
+        if (strpos(strtolower($course->fullname), strtolower ($getname)) !== false) {
             $namesearch = true;
         } else {
             $namesearch = false;
@@ -247,28 +247,28 @@ foreach ($courses as $course){
     } else {
         $namesearch = true;
     }
-    $buttonString = '';
-    
+    $buttonstring = '';
+
     // Don't display the front page, don't display hidden courses and do not display a course that hasn't had a price set up yet.
-    if ($course->id != 1 && $course->visible == 1 && $evars->cost != null && fnmatch($csearch, $course->category) && $namesearch){
+    if ($course->id != 1 && $course->visible == 1 && $evars->cost != null && fnmatch($csearch, $course->category) && $namesearch) {
 
         echo '<td><div class="storeInst" tabindex="0" id="'.$x.'"><div class="navbar-inner shopHeader"><div class="title"><strong>'.$course->fullname.'
         </strong><div class="plusMark">[+] </div></div></div><div class="coursebox shopDesc"><p>'.$summary.'</p><div class="buttons">';
 
         // Shop will not allow users that are already enroled in that course to purchase it again. Once the user is no longer enroled, they may purchase the course again.
-        if ($enrolled){ echo '<b>You are already enrolled in this course!</b></div></div><br>';
+        if ($enrolled) { echo '<b>You are already enrolled in this course!</b></div></div><br>';
 
         // Shop will not allow you to add course to cart twice. If this fails, it will still erase the duplicate entry.
-        } else if (in_array($course->id, $cartstringarray)){
+        } else if (in_array($course->id, $cartstringarray)) {
             echo '<b>Added to Cart!</b></div></div><br>';
 
         // To avoid using javascript, clicking the "add to cart" button will refresh the page with $_POST
         // variables to add to the database. It will then jump back to the course which was clicked.
-        
+
         // Subscriptions will go to paypal right away until the server side scripts are updated to handle subscriptions in
         // the cart with everything else.
-        } else{
-            if($evars->customint1 == 1){
+        } else {
+            if($evars->customint1 == 1) {
                 echo '<form method="POST" action="http://elightenmentlearning.com/payment/paypal.php"><b>$'.$evars->cost.' </b>
                 <input type="hidden" name="pID" value="'.base64_encode(json_encode(array($course->id))).'">
                 <input type="hidden" name="pName" value="'.base64_encode(json_encode(array($course->fullname))).'">
@@ -281,19 +281,20 @@ foreach ($courses as $course){
                 <input type="submit" value="'.get_string('subscribe', 'enrol_elightenment').'"></form></div></div></div><br>';
             } else {
                 echo '<form method="POST" action="#'.$x.'"><b>$'.$evars->cost.' </b>
-                <input type="hidden" name="id" value="'.$course->id.'"><input type="submit" value="'.get_string('sendpaymentbutton', 'enrol_elightenment').'"></form></div></div></div><br>'; }
+                <input type="hidden" name="id" value="'.$course->id.'"><input type="submit" value="
+                '.get_string('sendpaymentbutton', 'enrol_elightenment').'"></form></div></div></div><br>'; }
             }
         echo '</td>';
         $x++;
-        
+
     }
-    if ( $test != 0 ){
+    if ( $test != 0 ) {
         echo '</tr>';
     }
 }
-    if (isset($_GET['name']) && $x == 0){
-        echo '<td><div class="storeInst">No courses met your search criteria!</div></td></tr>';
-    }
+if (isset($_GET['name']) && $x == 0) {
+    echo '<td><div class="storeInst">No courses met your search criteria!</div></td></tr>';
+}
 echo '</table>';
 
 echo $OUTPUT->footer();

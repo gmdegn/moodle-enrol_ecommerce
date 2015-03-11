@@ -44,14 +44,15 @@ if ($ADMIN->fulltree) {
         ENROL_EXT_REMOVED_SUSPENDNOROLES => get_string('extremovedsuspendnoroles', 'enrol'),
         ENROL_EXT_REMOVED_UNENROL        => get_string('extremovedunenrol', 'enrol'),
     );
-    $settings->add(new admin_setting_configselect('enrol_elightenment/expiredaction', get_string('expiredaction', 'enrol_elightenment'), get_string('expiredaction_help', 'enrol_elightenment'), ENROL_EXT_REMOVED_SUSPENDNOROLES, $options));
+    $settings->add(new admin_setting_configselect('enrol_elightenment/expiredaction', get_string('expiredaction', 
+    'enrol_elightenment'), get_string('expiredaction_help', 'enrol_elightenment'), ENROL_EXT_REMOVED_SUSPENDNOROLES, $options));
 
     // --- enrol instance defaults ----------------------------------------------------------------------------
     $settings->add(new admin_setting_heading('enrol_elightenment_defaults',
         get_string('enrolinstancedefaults', 'admin'), get_string('enrolinstancedefaults_desc', 'admin')));
 
     $settings->add(new admin_setting_configtext('enrol_elightenment/cost', get_string('cost', 'enrol_elightenment'), '', 0, PARAM_FLOAT, 4));
-    
+
     $settings->add(new admin_setting_configcheckbox('enrol_elightenment/customint1', get_string('subscribe', 'enrol_elightenment'), '', 0));
 
     if (!during_initial_install()) {

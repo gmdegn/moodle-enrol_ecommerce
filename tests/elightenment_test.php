@@ -158,7 +158,6 @@ class enrol_elightenment_testcase extends advanced_testcase {
         $this->assertFalse($DB->record_exists('role_assignments', array('contextid' => $context2->id, 'userid' => $user1->id, 'roleid' => $teacherrole->id)));
         $this->assertTrue($DB->record_exists('role_assignments', array('contextid' => $context2->id, 'userid' => $user1->id, 'roleid' => $studentrole->id)));
 
-
         $ecomplugin->set_config('expiredaction', ENROL_EXT_REMOVED_UNENROL);
         role_assign($studentrole->id, $user3->id, $context1->id);
         role_assign($studentrole->id, $user2->id, $context2->id);

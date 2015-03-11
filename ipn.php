@@ -38,18 +38,18 @@ $cdata = get_courses();
 
 // To get the variable info back from paypal, you need to send it and get it back as 'custom.'
 // This has been set up so that the last variable in the array is the user ID and the rest are the course IDs.
-// I relaize that this is stupid, I am sorry.
-$custom = json_decode(base64_decode($_POST['custom']));
+$getcustom = optional_param('custom', null, PARAM_TEXT);
+$custom = json_decode(base64_decode($getcustom));
 $courses = array();
-for ($x = 0; $x < (sizeof($custom) - 1); $x++){
+for ($x = 0; $x < (count($custom) - 1); $x++) {
     array_push($courses, $custom[$x]);
 }
 $uid = $custom[count($custom) - 1];
 $creg = array();
 $x = 0;
 
-foreach ($cdata as $c){
-    if (in_array($c->id, $courses)){
+foreach ($cdata as $c) {
+    if (in_array($c->id, $courses)) {
         $creg[$x] = $c;
         $x++;
     }
@@ -59,21 +59,9 @@ if (! $userfile = $DB->get_record('user', array('id' => $uid))) {
     exit("User $uid doesn't exist");
 }
 
-// Get the enrolid and the student's role ID from the database.
-// If there are multiple matching entries somehow, the latest will be selected.
-$sqlget = $DB->get_record_sql('SELECT id FROM {enrol} WHERE cost > 0', array(1));
-foreach ($sqlget as $val){
-    $enrolid = $val;
-}
-$sql = 'SELECT roleid FROM {enrol} WHERE id = '.$enrolid;
-$sqlget = $DB->get_record_sql($sql, array(1));
-foreach ($sqlget as $val){
-    $roleid = $val;
-}
-
 // check all the courses to make sure they exist
-foreach ($courses as $courseID){
-    if (!$DB->get_record("course", array("id"=>$courseID))) {
+foreach ($courses as $courseid) {
+    if (!$DB->get_record("course", array("id"=>$courseid))) {
         exit("Not a valid course id");
     }
 }
@@ -82,7 +70,12 @@ foreach ($courses as $courseID){
 $enrolname = 'elightenment';
 $enrol = enrol_get_plugin($enrolname);
 
-foreach ($creg as $course){
+foreach ($creg as $course) {
+    $sqlget = $DB->get_record('enrol', array('courseid' => $course->id, 'enrol' => 'elightenment'));
+    foreach ($sqlget as $val) {
+        $roleid = $val->roleid;
+    }
+
     $enrolinstances = enrol_get_instances($course->id, true);
     foreach ($enrolinstances as $courseenrolinstance) {
         if ($courseenrolinstance->enrol == $enrolname) {

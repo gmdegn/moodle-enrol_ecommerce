@@ -30,12 +30,10 @@ require_once('../../../lib/filelib.php');
 
 global $DB, $OUTPUT, $PAGE, $COURSE;
 
-if(! $DB->record_exists('enrol_elightenment', array())){
+if(! $DB->record_exists('enrol_elightenment', array())) {
     $record = new stdClass();
     $record->authkey = optional_param('keyval', null, PARAM_TEXT);;
     $insert = $DB->insert_record('enrol_elightenment', $record, false);
     header("Location: ".$CFG->wwwroot."/enrol/elightenment/shop.php");
     die();
 }
- 
-?>
