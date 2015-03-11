@@ -26,9 +26,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2015022300;
+$plugin->version   = 2015031100;
 $plugin->requires  = 2014050800;
-$plugin->release   = 'v1.4';
+$plugin->release   = 'v1.41';
 $plugin->component = 'enrol_elightenment';
 $plugin->cron      = 600;
 $plugin->maturity  = MATURITY_STABLE;
