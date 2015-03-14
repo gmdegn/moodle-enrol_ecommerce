@@ -3,9 +3,9 @@
 <p><b><?php echo get_string("cost").": {$instance->currency} {$localisedcost}"; ?></b></p>
 <p><?php print_string("paymentinstant") ?></p>
 
-<form action="<?php p($shopURL) ?>" method="post">
+<form action="<?php p($shopurl) ?>" method="post">
 
-<input type="hidden" name="id" value="<?php p($courseID) ?>" />
+<input type="hidden" name="id" value="<?php p($courseid) ?>" />
 
 <input type="submit" value="<?php print_string("sendpaymentbutton", "enrol_elightenment") ?>" />
 

@@ -34,7 +34,7 @@ class enrol_elightenment_plugin extends enrol_plugin {
 
     public function can_hide_show_instance(stdClass $instance) {
         $context = context_course::instance($instance->courseid);
-        return has_capability('enrol/mnet:config', $context);
+        return has_capability('enrol/elightenment:config', $context);
     }
 
     /**

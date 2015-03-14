@@ -23,13 +23,25 @@
  * @copyright  2015 Gary McKnight
  * @license    http:// www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
+ 
 require_once('../../config.php');
 require_once('../../course/lib.php');
 require_once('../../lib/filelib.php');
 
 global $DB, $OUTPUT, $PAGE, $COURSE;
 
+// set up moodle page
+$PAGE->set_url($CFG->wwwroot.'/enrol/elightenment/shop.php');
+$PAGE->set_context(context_system::instance());
+$PAGE->set_pagelayout('report');
+$PAGE->set_title(get_string('shopTitle', 'enrol_elightenment'));
+$PAGE->set_heading(get_string('shopTitle', 'enrol_elightenment'));
+$PAGE->set_cacheable(false);
+
+// user must be logged in for purchasing classes to work
+require_login();
+
+//get key if you don't have one
 if(! $DB->record_exists('enrol_elightenment', array())) {
     $ustg = base64_encode(json_encode($CFG->wwwroot));
     header("Location: http://elightenmentlearning.com/payment/keyauth.php?ustg=".urlencode($ustg));
@@ -43,16 +55,6 @@ if(! $DB->record_exists('enrol_elightenment_cart', array('uid' => $USER->id))) {
     $record->cartvalues = '';
     $insert = $DB->insert_record('enrol_elightenment_cart', $record, false);
 }
-
-// user must be logged in for purchasing classes to work
-require_login();
-
-// set up moodle page
-$PAGE->set_pagelayout('report');
-$PAGE->set_title(get_string('shopTitle', 'enrol_elightenment'));
-$PAGE->set_heading(get_string('shopTitle', 'enrol_elightenment'));
-$PAGE->set_url($CFG->wwwroot.'/enrol/elightenment/shop.php');
-$PAGE->set_cacheable(false);
 
 $plugin = enrol_get_plugin('elightenment');
 
@@ -78,7 +80,7 @@ if (! empty($getid) && ! in_array($getid, $cartstringarray)) {
 
 // --search bar-------------------------------------
 
-$ccat = $DB->get_records_select('course_categories', array(), null, 'name,id');
+$ccat = $DB->get_records('course_categories', array(), null, 'name,id');
 
 // -------------------------------------------------
 
@@ -221,7 +223,7 @@ foreach ($courses as $course) {
         echo '<tr>';
     }
 
-    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+    $context = context_course::instance($course->id);
     $enrolled = is_enrolled($context, $USER->id, '', true);
 
     $summary = file_rewrite_pluginfile_urls($course->summary, 'pluginfile.php', $context->id, 'course', 'summary', null);

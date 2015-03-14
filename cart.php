@@ -34,10 +34,11 @@ global $DB, $OUTPUT, $PAGE, $USER;
 require_login();
 
 // set up moodle page
+$PAGE->set_url($CFG->wwwroot.'/enrol/elightenment/cart.php');
+$PAGE->set_context(context_system::instance());
 $PAGE->set_pagelayout('report');
 $PAGE->set_title(get_string('cartTitle', 'enrol_elightenment'));
 $PAGE->set_heading(get_string('cartTitle', 'enrol_elightenment'));
-$PAGE->set_url($CFG->wwwroot.'/enrol/elightenment/cart.php');
 $PAGE->set_cacheable(false);
 
 // check to see if the Cart has bee created yet. If not, create it; otherwise
